@@ -5,7 +5,7 @@
 #  - admin/upload page
 
 # cofiguration variables
-$pic_dir = 'pics';
+$pic_dir = 'pictures';
 $title = 'Pictures of Past Coastal Valley Lines Shows';
 
 # header and sidebars
@@ -14,9 +14,9 @@ include 'header.html';
 # figure out if we're viewing an album and adjust
 $page = false;
 if( isset($_GET["page"] ) ) {
-   if( file_exists("pics/".$_GET['page']) ) {
+   if( file_exists("$pic_dir/".$_GET['page']) ) {
       $page = $_GET['page'];
-      $pic_dir = "pics/".$page;
+      $pic_dir = "$pic_dir/".$page;
 
       $title = "Sorry, no title for this album yet";
       if( file_exists("$pic_dir/.index.txt") and 
@@ -64,11 +64,6 @@ if( $dir = opendir($pic_dir) ) {
 
          print "<div id=\"img_nav\">";
 
-         # It's a start. Still need to deal with resize/scaling issues
-         print "<img alt=\"\" src=\"$img_path\"/><br/>\n";
-         # TODO: next, previous, album links
-         # TODO: CSS center
-
          # get our position in the array
          $pos = array_search($img, $files);
 
@@ -112,6 +107,11 @@ if( $dir = opendir($pic_dir) ) {
          print "Last&gt;&gt;";
          if( $next ) print "</a>";
 
+         print "<br/>\n";
+
+         # It's a start. Still need to deal with resize/scaling issues
+         print "<img alt=\"\" src=\"$img_path\"/><br/>\n";
+
          print "</div>\n";
       } else {
          $i = 0;
@@ -127,7 +127,7 @@ if( $dir = opendir($pic_dir) ) {
                }
                print "<td width=\"33%\">";
                print "<a href=\"pics.php?page=$page&img=$file\">";
-               print "<img alt=\"\" src=\"$pic_dir/thumbnails/$file\"/>";
+               print "<img alt=\"\" src=\"$pic_dir/.thumbnails/$file\"/>";
                print "</a></td>\n";
                $i++;
             } else {
