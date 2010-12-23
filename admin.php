@@ -115,6 +115,7 @@ if( $login ) {
          $newname = $tmp[0];
          $tmp = sscanf($newname, "%d");
          $newname = $tmp[0] + 1;
+         # FIXME: sprintf to get leading 0 if necessary
          $newname = "$newname.jpg";
          move_uploaded_file($uploadpath, "$pic_dir/$newname");
          $img_path = escapeshellarg("$pic_dir/$newname");
