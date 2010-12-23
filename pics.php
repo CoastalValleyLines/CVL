@@ -70,7 +70,7 @@ if( $dir = opendir($pic_dir) ) {
 
          # Link? to first image
          if( $pos > 0 ) {
-            print "<a href=\"pics.php?page=$page&img=".$files[0]."\">";
+            print "<a href=\"pics.php?page=$page&amp;img=".$files[0]."\">";
          }
          print "&lt;&lt;First";
          if( $pos > 0 ) {
@@ -80,7 +80,7 @@ if( $dir = opendir($pic_dir) ) {
 
          # Link? to previous image
          if( $pos > 0 ) {
-            print "<a href=\"pics.php?page=$page&img=".$files[$pos-1]."\">";
+            print "<a href=\"pics.php?page=$page&amp;img=".$files[$pos-1]."\">";
          }
          print "&lt;Prev";
          if( $pos > 0 ) print "</a>";
@@ -92,7 +92,7 @@ if( $dir = opendir($pic_dir) ) {
          $next = false;
          if( isset($files[$pos+1]) ) $next = $files[$pos+1];
          if( $next ) {
-            print "<a href=\"pics.php?page=$page&img=$next\">";
+            print "<a href=\"pics.php?page=$page&amp;img=$next\">";
          }
          print "Next&gt;";
          if( $next ) {
@@ -102,7 +102,7 @@ if( $dir = opendir($pic_dir) ) {
 
          # Link? to last
          if( $next ) {
-            print "<a href=\"pics.php?page=$page&img=".$files[count($files)-1]."\">";
+            print "<a href=\"pics.php?page=$page&amp;img=".$files[count($files)-1]."\">";
          }
          print "Last&gt;&gt;";
          if( $next ) print "</a>";
@@ -126,7 +126,7 @@ if( $dir = opendir($pic_dir) ) {
                   print "</tr><tr>\n";
                }
                print "<td width=\"33%\">";
-               print "<a href=\"pics.php?page=$page&img=$file\">";
+               print "<a href=\"pics.php?page=$page&amp;img=$file\">";
                print "<img alt=\"\" src=\"$pic_dir/.thumbnails/$file\"/>";
                print "</a></td>\n";
                $i++;
@@ -137,7 +137,7 @@ if( $dir = opendir($pic_dir) ) {
                   $name = htmlentities(fgets($fh));
                   fclose($fh);
                }
-               print "<h2><a href=\"pics.php?page=$file\">$name</h2>\n";
+               print "<h2><a href=\"pics.php?page=$file\">$name</a></h2>\n";
             }
          }
 
