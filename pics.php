@@ -13,6 +13,14 @@ include 'header.html';
 
 # figure out if we're viewing an album and adjust
 $page = false;
+
+if( preg_match("|/|", $_GET['page']) ) {
+   unset($_GET['page']);
+}
+if( preg_match("|/|", $_GET['img']) ) {
+   unset($_GET['img']);
+}
+
 if( isset($_GET["page"] ) ) {
    if( file_exists("$pic_dir/".$_GET['page']) ) {
       $page = $_GET['page'];
