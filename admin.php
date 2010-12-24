@@ -1,10 +1,5 @@
 <?php
-
-session_start();
-
 # TODO:
-#  - auto thumbnails
-#  - admin/upload page
 #  - protect our guts with htaccess (.git, .htaccess, etc)
 #  - turn off auto index pages
 
@@ -13,8 +8,12 @@ session_start();
 #  - Album overview; add new albums
 #  - Album view: name/rename album, upload new photos
 #
-# TODO: login with cookies
-# TODO: log out (destroy session)
+# TODO: 
+#  - log out (destroy session)
+#  - photo delete mechanism
+#  - return to admin page
+
+session_start();
 
 # cofiguration variables
 $pic_dir = 'pictures';
@@ -22,6 +21,12 @@ $title = 'Picture Admin Page';
 
 # header and sidebars
 include 'header.html';
+
+# Log Out
+if( isset($_GET['logout']) ) {
+   unset($_SESSION['login']);
+   session_destroy();
+}
 
 # look for and validate login credentials
 if( isset($_POST['name']) and isset($_POST['pass']) ) {
@@ -70,13 +75,17 @@ if( $login ) {
          $title = "";
          if( file_exists("$pic_dir/.index.txt") and 
                false !== ($fh = fopen("$pic_dir/.index.txt", "r")) ) {
-            $title = htmlentities(fgets($fh));
+            $title = htmlspecialchars(fgets($fh));
             fclose($fh);
          }
 
          # Update album title
          if( isset($_POST['title']) ) {
             $title = $_POST['title'];
+             # if magic quotes are on, remove them from our title
+            if( get_magic_quotes_gpc() ) {
+               $title = stripslashes($title);
+            }
             if( false !== ($fh = fopen("$pic_dir/.index.txt", "w")) ) {
                fwrite($fh, "$title\n");
                fclose($fh);
@@ -115,8 +124,7 @@ if( $login ) {
          $newname = $tmp[0];
          $tmp = sscanf($newname, "%d");
          $newname = $tmp[0] + 1;
-         # FIXME: sprintf to get leading 0 if necessary
-         $newname = "$newname.jpg";
+         $newname = sprintf("%02d.jpg", $newname);
          move_uploaded_file($uploadpath, "$pic_dir/$newname");
          $img_path = escapeshellarg("$pic_dir/$newname");
          $thumb_path = escapeshellarg("$pic_dir/.thumbnails/$newname");
@@ -125,6 +133,14 @@ if( $login ) {
       } else {
          print "File upload failed: wrong file extension. Please upload jpeg images<br/>\n";
       }
+   } else if( isset($_POST['newalbum']) ) {
+      $oldname = $files[count($files)-1];
+      $tmp = sscanf($oldname, "%d");
+      $num = $tmp[0] + 1;
+      $newname = sprintf("%03d", $num);
+      # make a new directory and don't complain if it already exists
+      exec("mkdir -p pictures/$newname/.thumbnails");
+      $files[] = $newname;
    }
 }
 
@@ -133,8 +149,9 @@ if( $login ) {
 <h3><?
 # page title here
 if( $page and $login ) {
+   print "<a href=\"admin.php\">Back to Picture Admin Page</a><br/><br/>\n";
    print "<form action=\"$here\" method=\"post\">\n";
-   print "<input type=\"text\" name=\"title\" size=\"80\" value=\"$title\"/>\n";
+   print "Title: <input type=\"text\" name=\"title\" size=\"60\" value=\"$title\"/>\n";
    print "<input type=\"submit\" value=\"update\"/>\n";
    print "</form>\n";
 } else {
@@ -160,10 +177,10 @@ if( $login ) {
          $name = $file;
          if( file_exists("$pic_dir/$file/.index.txt") and 
                ($fh = fopen("$pic_dir/$file/.index.txt", "r") ) ) {
-            $name = htmlentities(fgets($fh));
+            $name = htmlspecialchars(fgets($fh));
             fclose($fh);
          }
-         print "<h2><a href=\"admin.php?page=$file\">$name</h2>\n";
+         print "<h2><a href=\"admin.php?page=$file\">$name</a></h2>\n";
       }
    }
 
@@ -183,7 +200,16 @@ if( $login ) {
       <?
    } else {
       # TODO: add new album here
+      ?>
+         <form action="admin.php" method="post">
+         <input type="submit" name="newalbum" value="Create New Album"/>
+         </form>
+         <?
    }
+
+   ?>
+      <h4><a href="admin.php?logout">Log Out</a></h4>
+      <?
 } else {
    # not logged in; display login page
    ?>
