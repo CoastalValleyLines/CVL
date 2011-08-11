@@ -7,13 +7,16 @@
 # Modes:
 #  - Album overview; add new albums
 #  - Album view: name/rename album, upload new photos
-#
-# TODO: 
-#  - log out (destroy session)
-#  - photo delete mechanism
-#  - return to admin page
 
 session_start();
+
+# if the user isn't connecting over https, redirect them to https for password
+# security
+if ($_SERVER['SERVER_PORT']!=443)
+{
+   $url = "https://". $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
+   header("Location: $url");
+}
 
 # cofiguration variables
 $pic_dir = 'pictures';
