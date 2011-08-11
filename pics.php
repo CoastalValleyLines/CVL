@@ -56,6 +56,7 @@ if( $dir = opendir($pic_dir) ) {
    }
 
    closedir($dir);
+   sort($files);
 }
 
 # code here
